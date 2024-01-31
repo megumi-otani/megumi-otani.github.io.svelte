@@ -1,6 +1,6 @@
 <script lang="ts">
   import viteLogo from '/vite.svg'
-  import Pagenation from './lib/Pagenation.svelte';
+  import Pagination from './lib/Pagination.svelte';
 	import IntersectionObserver from './lib/IntersectionObserver.svelte';
   import { beforeUpdate, onMount, onDestroy, afterUpdate } from 'svelte';
 
@@ -79,7 +79,7 @@
       </section>
     </IntersectionObserver>
   </div>
-  <Pagenation on:moveToSection={moveToSection} bind:selectedSection={selectedSection} />
+  <Pagination on:moveToSection={moveToSection} bind:selectedSection={selectedSection} />
 </main>
 
 <style lang="scss">
