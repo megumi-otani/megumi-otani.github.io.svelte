@@ -1,125 +1,143 @@
 <script lang="ts">
-  import Section1 from './lib/Section1.svelte';
-  import Section2 from './lib/Section2.svelte';
-  import Section3 from './lib/Section3.svelte';
-  import Section4 from './lib/Section4.svelte';
-  import Section5 from './lib/Section5.svelte';
-  import Pagination from './lib/Pagination.svelte';
+  import viteLogo from '/vite.svg'
+  import Pagenation from './lib/Pagenation.svelte';
 	import IntersectionObserver from './lib/IntersectionObserver.svelte';
+  import { beforeUpdate, onMount, onDestroy, afterUpdate } from 'svelte';
 
-  let selectedId: number = 1
+  onMount(() => {
+    console.log('onMount');
+  });
+  beforeUpdate(() => {
+    console.log('beforeUpdate');
+  });
+  afterUpdate(() => {
+    console.log('afterUpdate');
+  });
+  onDestroy(() => {
+    console.log('onDestroy');
+  });
+  console.log('script');
 
-      // Intersection Observer
-      // const sectionsNodeList = document.querySelectorAll(".section");
-      // const sections = Array.prototype.slice.call(sectionsNodeList, 0);
-      // const observerRoot = document.querySelector(".fullPageScroll");
-      // const observer = new IntersectionObserver(doWhenIntersect, {
-      //   root: observerRoot,
-      //   rootMargin: "-50% 0px",
-      //   threshold: 0
-      // });
-      // sections.forEach(function(section) {
-      //   observer.observe(section);
-      // });
+  let selectedSection = "section1"
 
-      /**
-       * 交差したときに呼び出す関数
-       * @param entriesNodeList - IntersectionObserverEntry IntersectionObserverが交差したときに渡されるオブジェクトです。
-       */
-       function doWhenIntersect(entriesNodeList: IntersectionObserverEntry[]) {
-        const entries = Array.prototype.slice.call(entriesNodeList, 0);
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            activatePagination(entry.target);
-          }
-        });
-      }
+  function moveToSection(event: any) {
+    selectedSection = event.detail.targetId
+    const target = document.getElementById(event.detail.targetId)
+    const container = document.getElementById('Container')
+    if (target === null || container === null) return
 
-      /**
-       * ページネーションの大きさを変える関数
-       * @param element - HTMLElement 現在表示中のスライドのHTML要素を引数に取ります。
-       */
-      function activatePagination(element: Element) {
-        const currentActiveIndex = document.querySelector(
-          "#pagination .active"
-        );
-        if (currentActiveIndex !== null) {
-          currentActiveIndex.classList.remove("active");
-        }
-        const newActiveIndex = document.querySelector(
-          "a[href='#" + element.id + "']"
-        );
-        if (newActiveIndex === null) return
-        newActiveIndex.classList.add("active");
-      }
+    container.scrollTo({
+      top: target.offsetTop,
+      left: 0,
+      behavior: 'smooth'
+    })
+  }
+  function changeSelectedSection(event: any) {
+    // TO: スクロール中はreturn <= メニュークリックして移動時に差が大きいと反応するため
+    selectedSection = `section${event.detail.targetId}`
+  }
 </script>
 
 <main>
-  <div class="fullPageScroll">
-    <IntersectionObserver let:intersecting top={400}>
-      {#if intersecting}
-        <section class="somesection even">
-          <div class="content">
-            <h3>
-              This message will show if it is intersecting.
-            </h3>
-            <p>
-              Obviously you won't see it if it isn't, so better open up the console to see the changes.
-            </p>
-          </div>
+  <div id="Container" class="fullPageScroll">
+    <IntersectionObserver on:moveToSection={changeSelectedSection} sessionNum={1}>
+        <section id="section1" class="section section1">
+          <h1>Section 1</h1>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores
+            at dolorem, eveniet fugit iste maxime nihil sint. Aperiam dolor in
+            ipsam nesciunt, nihil odio rem, sit suscipit totam velit voluptate?
+          </p>
         </section>
-      {:else}
-        <section class="somesection">
-          This message will show if the section isn't intersecting. Hello from the console! 👀
-        </section>
-      {/if}
     </IntersectionObserver>
-    <IntersectionObserver>
-      <Section1 />
+    <IntersectionObserver on:moveToSection={changeSelectedSection} sessionNum={2}>
+      <section id="section2" class="section section2">
+        <div class="imageWrapper">
+          <img src={viteLogo} alt="" height="534" />
+        </div>
+        <h1>Tokyo Gate Bridge by SONY a7R3</h1>
+      </section>
     </IntersectionObserver>
-    <IntersectionObserver>
-      <Section2 />
+    <IntersectionObserver on:moveToSection={changeSelectedSection} sessionNum={3}>
+      <section id="section3" class="section section3">
+        <h1>Section 3</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores
+          at dolorem, eveniet fugit iste maxime nihil sint. Aperiam dolor in
+          ipsam nesciunt, nihil odio rem, sit suscipit totam velit voluptate?
+        </p>
+      </section>
     </IntersectionObserver>
-    <IntersectionObserver>
-      <Section3 />
-    </IntersectionObserver>
-    <IntersectionObserver>
-      <Section4 />
-    </IntersectionObserver>
-    <IntersectionObserver>
-      <Section5 />
+    <IntersectionObserver on:moveToSection={changeSelectedSection} sessionNum={4}>
+      <section id="section4" class="section section4">
+        <h1>Section 4</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Asperiores
+          at dolorem, eveniet fugit iste maxime nihil sint. Aperiam dolor in
+          ipsam nesciunt, nihil odio rem, sit suscipit totam velit voluptate?
+        </p>
+      </section>
     </IntersectionObserver>
   </div>
-  <Pagination selectedId={selectedId} />
+  <Pagenation on:moveToSection={moveToSection} bind:selectedSection={selectedSection} />
 </main>
 
 <style lang="scss">
-.somesection {
-  width:100%;
-  height:100vh;
-  display: flex;
-align-items: center;
-justify-content: center;
-}
-
-.somesection.even{
-  background:#ccc;
-}
-
-.content{
-text-align:center;
-  width:350px;
-}
 .fullPageScroll {
   width: 100%;
   height: 100vh;
   scroll-snap-type: y mandatory;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  :global(.section) {
+
+  .section {
     width: 100%;
     height: 100vh;
     padding: 10%;
+    scroll-snap-align: start;
+      position: relative;
+
+    &.section1 {
+      background-color: #5151FC;
+    }
+
+    &.section2 {
+      background-color: #00ECFF;
+
+      .imageWrapper{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+
+        img {
+          display: block;
+          position: absolute;
+          width: 100%;
+          height: auto;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      h1 {
+        position: absolute;
+        left: 0;
+        top: 88%;
+        width: 100%;
+        color: #ffffff;
+        text-align: center;
+      }
+    }
+    &.section3 {
+      background-color: #5151FC;
+    }
+    &.section4 {
+      background-color: #00ECFF;
+    }
   }
+
 }
+
 </style>

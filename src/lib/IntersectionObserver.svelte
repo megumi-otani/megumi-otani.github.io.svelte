@@ -1,6 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
 
+  export let sessionNum = 0;
   export let once = false;
   export let top = 0;
   export let bottom = 0;
@@ -12,19 +15,31 @@
 
   onMount(() => {
     if (typeof IntersectionObserver !== 'undefined') {
-      const rootMargin = `${bottom}px ${left}px ${top}px ${right}px`;
 
-      const observer = new IntersectionObserver(entries => {
+      const onScreen = (entries: any) => {
         intersecting = entries[0].isIntersecting;
-        if (intersecting && once) {
+        if (intersecting) {
+          dispatch('moveToSection', { targetId : sessionNum });
+        if (once) {
           observer.unobserve(container);
         }
-      }, {
-        rootMargin
-      });
+        }
+      }
+      const options = {
+        threshold: 0.5,
+        rootMargin: `${bottom}px ${left}px ${top}px ${right}px`
+      }
+
+      const observer = new IntersectionObserver(onScreen, options);
 
       observer.observe(container);
-      return () => observer.unobserve(container);
+      console.log('監視を開始', sessionNum)
+
+      // unmounted
+      return () => {
+        observer.unobserve(container);
+        console.log('監視終了', sessionNum)
+      }
     }
 
     function handler() {
@@ -42,8 +57,15 @@
     }
 
     window.addEventListener('scroll', handler);
-    return () => window.removeEventListener('scroll', handler);
+
+    // unmounted
+    return () => {
+      console.log('unmounted')
+      window.removeEventListener('scroll', handler);
+    }
   });
+
+
 </script>
 
 <div bind:this={container}>

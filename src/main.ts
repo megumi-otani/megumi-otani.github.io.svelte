@@ -1,10 +1,8 @@
 import './app.css';
 import App from './App.svelte';
 
-const target = <HTMLInputElement>document.getElementById('app');
-
 const app = new App({
-  target
+  target: document.getElementById('app')
 });
 
 export default app;
