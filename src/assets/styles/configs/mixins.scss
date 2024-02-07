@@ -1,0 +1,121 @@
+/* ==========================
+   Mixins
+ ========================== */
+@use 'sass:math';
+@use './mediaqueries.scss' as *;
+@use './functions.scss' as *;
+@use './breakpoints.scss' as *;
+
+/* 画像置換 */
+@mixin image-replace {
+  display: block;
+  overflow: hidden;
+  font-size: 0;
+  text-indent: 100%;
+  white-space: nowrap;
+  background-repeat: no-repeat;
+}
+
+/* スクロールバーを非表示 */
+@mixin hide-scrollbar {
+  /* IE, Edge 対応 */
+  -ms-overflow-style: none;
+
+  /* Firefox 対応 */
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    /* Chrome, Safari 対応 */
+    display: none;
+  }
+}
+
+/* --------------------------
+   表示行数を制御
+   @include line-clamp(1, 16px, 1.5);
+ -------------------------- */
+@mixin line-clamp($number-of-lines, $font-size, $line-height) {
+  overflow: hidden;
+  font-size: $font-size;
+  line-height: $line-height;
+
+  /* 1行 */
+  @if $number-of-lines == 1 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 複数行 */
+  @else {
+    -webkit-line-clamp: $number-of-lines;
+    -webkit-box-orient: vertical;
+    display: box;
+  }
+}
+
+/* --------------------------
+   縦横比維持したままレスポンシブ
+   要素を囲んでいる親クラスに指定
+   @include aspect-ratio(16, 9);
+   @include aspect-ratio(4, 3);
+   @include aspect-ratio(1920, 1080);
+ -------------------------- */
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+  width: 100%;
+
+  &::before {
+    display: block;
+    padding-top: math.div($height, $width) * 100%;
+    content: '';
+  }
+
+  > :first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* --------------------------
+   PCレイアウトとSPレイアウトのfont-size、line-heightを一括登録
+   font-sizeのみ登録することも可能
+   font-sizeの単位はPC -> px, SP -> vwで設定される
+   vwはcalcvw関数を使用して設定されたデザイン幅で計算
+   @include text-style(14, 21);
+   @include text-style(14);
+ -------------------------- */
+@mixin text-style($size, $lineHeight: false) {
+  @include mq-mobile {
+    font-size: calcvw($size, $sp-design-width);
+  }
+  @include mq-desktop {
+    font-size: calcvw($size, $pc-design-width);
+  }
+  @include mq($from: wide) {
+    font-size: #{$size}px;
+  }
+
+  @if $lineHeight {
+    line-height: round-line-height($lineHeight, $size);
+  }
+}
+
+/* --------------------------
+   レスポンシブスタイルの設定
+   単位はPC -> px, SP -> vwで設定される
+   @include responsive-style(width, 20);
+ -------------------------- */
+@mixin responsive-style($property, $value) {
+  @include mq-mobile {
+    #{$property}: calcvw($value, $sp-design-width);
+  }
+  @include mq-desktop {
+    #{$property}: calcvw($value, $pc-design-width);
+  }
+  @include mq($from: wide) {
+    #{$property}: #{$value}px;
+  }
+}

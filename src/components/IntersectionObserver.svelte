@@ -33,12 +33,12 @@
       const observer = new IntersectionObserver(onScreen, options);
 
       observer.observe(container);
-      console.log('監視を開始', sessionNum)
+      console.debug('監視を開始', sessionNum)
 
       // unmounted
       return () => {
         observer.unobserve(container);
-        console.log('監視終了', sessionNum)
+        console.debug('監視終了', sessionNum)
       }
     }
 
@@ -73,9 +73,13 @@
 </div>
 
 <style lang="scss">
+@use '../assets/styles/configs/mediaqueries.scss' as *;
+
+@include mq-desktop() {
   div {
     width: 100%;
     height: 100vh;
     scroll-snap-align: start;
   }
+}
 </style>

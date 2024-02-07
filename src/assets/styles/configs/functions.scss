@@ -1,0 +1,35 @@
+/* ==========================
+   Functions
+ ========================== */
+@use 'sass:math';
+@use './breakpoints.scss' as *;
+
+/* --------------------------
+   line-height小数点2桁で四捨五入
+   line-height: round-line-height(32, 16);
+ -------------------------- */
+@function round-line-height($line-height, $fontSize) {
+  /* line-heightを10000倍して小数点切り捨てる */
+  $integer-line-height: math.round(math.div($line-height, $fontSize) * 10000);
+
+  /* 切り捨てた後、10000で割って元の桁数に戻す */
+  @return math.div($integer-line-height, 10000);
+}
+
+/* --------------------------
+   vw計算(第2引数のデフォルト値はdesignwidth.scssで設定されているSPデザイン幅を指定)
+   width: calcvw(200)
+   width: calcvw(300, 1280) $widthの個別指定も可能
+ -------------------------- */
+@function calcvw($num, $width: $sp-design-width) {
+  @return (math.div($num, $width) * 100vw);
+}
+
+/* --------------------------
+   vw計算(第2引数のデフォルト値はdesignwidth.scssで設定されているSPデザイン幅を指定)
+   width: calcvw(200)
+   width: calcvw(300, 1280) $widthの個別指定も可能
+ -------------------------- */
+@function calcpercent($num, $width: $sp-design-width) {
+  @return (math.div($num, $width) * 100%);
+}

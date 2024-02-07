@@ -1,0 +1,12 @@
+/* ==========================
+   メディアクエリ基準値設定
+ ========================== */
+$breakpoints: (
+  wide: 1440px,
+  desktop: 1280px,
+  tablet: 769px,
+  mobile: 320px
+);
+
+$pc-design-width: 1440;
+$sp-design-width: 360;
